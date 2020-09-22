@@ -1,0 +1,22 @@
+{
+  "name": "Anton",
+  "version": "1.0",
+  "manifest_version": 2,
+  "content_scripts": [
+    {
+      "matches": ["https://www.linkedin.com/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "browser_action": {
+    "default_popup": "popup/popup.html"
+  },
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "permissions": ["activeTab", "declarativeContent", "storage"],
+  "icons": {
+    "128": "128.png"
+  },
+  "content_security_policy": "script-src 'self' https://code.getmdl.io; object-src 'self'"
+}

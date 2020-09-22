@@ -1,0 +1,40 @@
+body {
+  min-width: 600px;
+  height: 600px;
+  position: relative;
+}
+
+#message {
+  position: absolute;
+  width: 500px;
+  top: 20vh;
+  left: 10vw;
+}
+
+.form-grid {
+  display: grid;
+  margin-top: 53vh;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+}
+
+.flex-container {
+  position: relative;
+  top: 90vh;
+  right: 15px;
+  left: 15px;
+  display: grid;
+  gap: 2rem;
+  width: 550px;
+  grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+}
+
+#title {
+  position: absolute;
+  width: 200px;
+  height: 75px;
+  top: 16.2vh;
+  left: 35vw;
+}
