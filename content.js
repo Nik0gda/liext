@@ -12,7 +12,13 @@ const htmlDecode = (input) => {
 };
 
 const getElementByXpath = (path) => {
-  return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+  return document.evaluate(
+    path,
+    document,
+    null,
+    XPathResult.FIRST_ORDERED_NODE_TYPE,
+    null
+  ).singleNodeValue;
 };
 
 const sleep = (ms) => {
@@ -22,7 +28,9 @@ const sleep = (ms) => {
 const randomSleep = (min, max) => {
   min = parseInt(min);
   max = parseInt(max);
-  return new Promise((resolve) => setTimeout(resolve, Math.round((Math.random() * (max - min) + min) * 1000)));
+  return new Promise((resolve) =>
+    setTimeout(resolve, Math.round((Math.random() * (max - min) + min) * 1000))
+  );
 };
 
 const spamInMail = async (pages) => {
@@ -37,7 +45,8 @@ const spamInMail = async (pages) => {
     // getting list of items
     let list = document.getElementsByClassName("search-results__result-item");
     await spamInMailOneUser(list, 0);
-    getElementByXpath("/html/body/main/div[1]/div/section/div[2]/nav/button[2]").click();
+    //TODO repeating code
+    document.getElementsByClassName("search-results__pagination-next-button");
     await randomSleep(4, 8);
     spamInMail(pages - 1);
   } else if (pages == 0) {
@@ -62,6 +71,14 @@ const getSettings = () => {
   });
 };
 
+const getCounter = () => {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(["counter"], function (obj) {
+      resolve(obj.counter);
+    });
+  });
+};
+
 const spamInMailOneUser = async (elements, element) => {
   await randomSleep(2, 5);
   let spam = await getState();
@@ -76,16 +93,19 @@ const spamInMailOneUser = async (elements, element) => {
      *      Checking for premium
      *      without premium you can't send free invites
      */
-    let order = element + 1;
-    try {                    
-      if (!getElementByXpath(`/html/body/main/div[1]/div/section/div[1]/div/div/div/div[1]/ol/li[${order}]/div[2]/div/div/div/article/section[1]/div[1]/div/dl/dd[1]/ul/li[2]/span/linkedin-logo/li-icon`)) {
-      } else {
-        let company;
-        company = getElementByXpath(`/html/body/main/div[1]/div/section/div[1]/div/div/div/div[1]/ol/li[${order}]/div[2]/div/div/div/article/section[1]/div[1]/div/dl/dd[2]/span[2]/span/a/span[1]`).innerHTML;
+    try {
+      if (user.getElementsByTagName("linkedin-logo")) {
+        let company = user
+          .getElementsByClassName("result-lockup__position-company")[0]
+          .getElementsByTagName("a")[0]
+          .getElementsByTagName("span")[0].innerHTML;
         company = htmlDecode(company.replace(/\s+/g, " ").trim());
 
         //clicking three dots icon
-        getElementByXpath(`/html/body/main/div[1]/div/section/div[1]/div/div/div/div[1]/ol/li[${order}]/div[2]/div/div/div/article/section[1]/div[2]/ul/li[1]/div/div[2]/div/div[1]/button`).click();
+        let threeDotsElement = user.getElementsByClassName(
+          "result-lockup__common-actions"
+        )[0];
+        threeDotsElement.getElementsByTagName("li-icon").parentElement.click();
         await randomSleep(1, 2);
         /**
          *        Clicking on the Message button
@@ -95,7 +115,7 @@ const spamInMailOneUser = async (elements, element) => {
          *    4. Click on the button
          */
 
-        let list = getElementByXpath(`/html/body/main/div[1]/div/section/div[1]/div/div/div/div[1]/ol/li[${order}]/div[2]/div/div/div/article/section[1]/div[2]/ul/li[1]/div/div[2]/div/div[1]/div/div`);
+        let list = threeDotsElement.getElementsByTagName("ul")[0];
         list = list.getElementsByTagName("li");
         let element = list[list.length - 1];
         element.getElementsByTagName("div")[1].click();
@@ -104,9 +124,16 @@ const spamInMailOneUser = async (elements, element) => {
         await randomSleep(settings.clickMessage.min, settings.clickMessage.max);
 
         /**
-         * Check if the person want only new users
-         */                                                                       
-        if (settings.other && getElementByXpath("/html/body/div[7]/div[1]/section/div[2]/section/div[1]/div/ul").getElementsByTagName("li").length > 1) {
+         * Check if the person wants only new users
+         */
+        let box = document.getElementById(
+          "artdeco-hoverable-outlet__message-overlay"
+        ).parentElement;
+        if (
+          settings.other &&
+          box.getElementsByTagName("ul")[0].getElementsByTagName("li").length >
+            1
+        ) {
         } else {
           /**
            *        Checking if the message is free
@@ -114,12 +141,20 @@ const spamInMailOneUser = async (elements, element) => {
            *    2.Checking it's value
            *    *everything inside of an if
            */
-          if (getElementByXpath("/html/body/div[7]/div[1]/section/div[2]/section/div[2]/div/span[2]/span").innerHTML.toLowerCase() == "free") {
+          let section = box.getElementsByClassName(
+            "message-overlay__conversation"
+          );
+          if (section.innerHTML.toLowerCase().indexOf("open profile") !== -1) {
             /**
              *      Getting user's name
              *  If it's not starting with a letter - skip
              */
-            let name = getElementByXpath("/html/body/div[7]/div[1]/section/header/h2").innerHTML.replace('Conversation with','').replace(/\s+/g, " ").trim().split(" ")[0];
+            let name = box
+              .getElementsByTagName("h2")[0]
+              .innerHTML.replace("Conversation with", "")
+              .replace(/\s+/g, " ")
+              .trim()
+              .split(" ")[0];
             if (name.match(/[a-z]/i)) {
               /**
                *      Sending the message
@@ -131,25 +166,50 @@ const spamInMailOneUser = async (elements, element) => {
                */
 
               //Subject pause
-              await randomSleep(settings.insertTitle.min, settings.insertTitle.max);
+              await randomSleep(
+                settings.insertTitle.min,
+                settings.insertTitle.max
+              );
               let evt = document.createEvent("Events");
               evt.initEvent("change", true, true);
 
-              document.querySelector(`[placeholder='Subject (required)']`).value = settings.title;
-              document.querySelector(`[placeholder='Subject (required)']`).dispatchEvent(evt);
+              document.querySelector(
+                `[placeholder='Subject (required)']`
+              ).value = settings.title;
+              document
+                .querySelector(`[placeholder='Subject (required)']`)
+                .dispatchEvent(evt);
 
-              let text = settings.message.replace("{NAME}", name).replace("{COMPANY}", company);
+              let text = settings.message
+                .replace("{NAME}", name)
+                .replace("{COMPANY}", company);
               //Main Message pause
-              await randomSleep(settings.insertMessage.min, settings.insertMessage.max);
+              await randomSleep(
+                settings.insertMessage.min,
+                settings.insertMessage.max
+              );
 
               document.querySelector(`[name='message']`).value = text;
               document.querySelector(`[name='message']`).dispatchEvent(evt);
               await randomSleep(1, 4);
 
               //Click Send pause
-              await randomSleep(settings.clickSend.min, settings.insertMessage.max);
-              getElementByXpath("/html/body/div[7]/div[1]/section/div[2]/section/div[2]/form[1]/div/section/button[3]").click();
-            }                   
+              await randomSleep(
+                settings.clickSend.min,
+                settings.insertMessage.max
+              );
+              section
+                .getElementsByTagName("span")
+                .find((x) => x.innerHTML.toLowerCase() === "send")[0]
+                .parentElement.click();
+              if (1) {
+                let counter = await getCounter();
+                chrome.storage.local.set(
+                  { counter: counter + 1 ? counter : 0 },
+                  () => {}
+                );
+              }
+            }
           }
         }
       }
@@ -157,7 +217,11 @@ const spamInMailOneUser = async (elements, element) => {
     //Main Message pause
     await randomSleep(settings.closeWindow.min, settings.closeWindow.max);
     try {
-      getElementByXpath("/html/body/div[7]/div[1]/section/header/button[2]").click();
+      document
+        .getElementsByClassName("message-overlay__conversation")
+        .getElementsByTagName("span")
+        .find((x) => x.innerHTML.split(" ")[0].toLowerCase() === "close")
+        .parentElement.parentElement.click();
     } catch (e) {}
     let scrollBy = user.clientHeight;
     window.scrollBy({
