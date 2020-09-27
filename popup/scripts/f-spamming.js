@@ -5,8 +5,26 @@ window.addEventListener("load", (event) => {
     .getElementById("resetCounter")
     .addEventListener("click", resetCounter);
   var snackbar = document.querySelector("#snackbar");
+  checkForUpdate();
   load();
 });
+
+const checkForUpdate = async () => {
+  const downloadTime = getDownloadTime();
+  const request = await fetch(
+    "https://api.github.com/repos/Nik0gda/liext/commits/master"
+  );
+  const commitTime = new Date(
+    Date.parse((await request.json()).commit.committer.date)
+  );
+  if (downloadTime < commitTime) {
+    const snackbarSettings = {
+      message: "New version available",
+      timeout: 60 * 60 * 1000,
+    };
+    snackbar.MaterialSnackbar.showSnackbar(snackbarSettings);
+  }
+};
 
 const save = () => {
   let saveError = "";
