@@ -50,8 +50,8 @@ const save = () => {
   } else {
     settings["other"] = false;
   }
-  settings["message"] = document.getElementById("messageContent").value;
-  settings["title"] = document.getElementById("subject").value;
+  settings["message"] = document.getElementById("message").value;
+  settings["subject"] = document.getElementById("subject").value;
   settings["limit"] = document.getElementById("limit").value;
   if (saveError) {
     snackbarSettings["message"] = saveError;
@@ -92,8 +92,7 @@ const load = () => {
     }
     obj = obj["settings"];
     console.log(obj);
-    document.getElementById("subject").value = obj["title"];
-    for (id of ["limit", "message"]) {
+    for (id of ["limit", "message", "subject"]) {
       if (obj[id]) {
         document.getElementById(id).value = obj[id];
         document.getElementById(id).parentElement.classList.add("is-dirty");
@@ -121,12 +120,12 @@ const load = () => {
           document
             .getElementById("startSpamming")
             .classList.remove("mdl-button--colored");
-          document.getElementById("startSpamming").value = "Stop Spamming";
+          document.getElementById("startSpamming").innerHTML = "Stop Spamming";
         } else {
           document
             .getElementById("startSpamming")
             .classList.add("mdl-button--colored");
-          document.getElementById("startSpamming").value = "Start Spamming";
+          document.getElementById("startSpamming").innerHTML = "Start Spamming";
         }
       }
     });

@@ -175,7 +175,7 @@ const spamInMailOneUser = async (elements, element) => {
 
               document.querySelector(
                 `[placeholder='Subject (required)']`
-              ).value = settings.title;
+              ).value = settings.subject;
               document
                 .querySelector(`[placeholder='Subject (required)']`)
                 .dispatchEvent(evt);
