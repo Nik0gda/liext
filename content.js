@@ -103,7 +103,7 @@ const spamInMailOneUser = async (elements, element) => {
 
         //clicking three dots icon
         let threeDotsElement = user.getElementsByClassName(
-          "result-lockup__action-button"
+          "result-lockup__common-actions"
         )[0];
         threeDotsElement.getElementsByTagName("li-icon").parentElement.click();
         await randomSleep(1, 2);
