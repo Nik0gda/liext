@@ -223,7 +223,7 @@ const spamInMailOneUser = async (elements, element) => {
               let counter = await getCounter();
               chrome.storage.local.set(
                 {
-                  counter: counter + 1 ? counter : 0,
+                  counter: counter ? counter + 1 : 0,
                 },
                 () => {}
               );
