@@ -1,7 +1,14 @@
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.command === "spam") {
-    sendResponse({ result: "Started Spamming" });
-    chrome.storage.local.set({ spam: true }, function () {});
+    sendResponse({
+      result: "Started Spamming",
+    });
+    chrome.storage.local.set(
+      {
+        spam: true,
+      },
+      function () {}
+    );
     spamInMail(parseInt(prompt("How many pages?")));
   }
 });
@@ -46,12 +53,21 @@ const spamInMail = async (pages) => {
     let list = document.getElementsByClassName("search-results__result-item");
     await spamInMailOneUser(list, 0);
     //TODO repeating code
-    document.getElementsByClassName("search-results__pagination-next-button");
+    document
+      .getElementsByClassName("search-results__pagination-next-button")[0]
+      .click();
     await randomSleep(4, 8);
     spamInMail(pages - 1);
   } else if (pages == 0) {
-    chrome.storage.local.set({ spam: false }, function () {});
-    chrome.runtime.sendMessage({ command: "spammed" });
+    chrome.storage.local.set(
+      {
+        spam: false,
+      },
+      function () {}
+    );
+    chrome.runtime.sendMessage({
+      command: "spammed",
+    });
   }
 };
 
@@ -85,7 +101,6 @@ const spamInMailOneUser = async (elements, element) => {
   let settings = await getSettings();
   if (spam === true && element < elements.length) {
     let user = elements[element];
-
     // Next user pause
     await randomSleep(settings.nextUser.min, settings.nextUser.max);
 
@@ -94,18 +109,17 @@ const spamInMailOneUser = async (elements, element) => {
      *      without premium you can't send free invites
      */
     try {
-      if (user.getElementsByTagName("linkedin-logo")) {
+      if (user.getElementsByTagName("linkedin-logo").length > 0) {
         let company = user
           .getElementsByClassName("result-lockup__position-company")[0]
           .getElementsByTagName("a")[0]
           .getElementsByTagName("span")[0].innerHTML;
         company = htmlDecode(company.replace(/\s+/g, " ").trim());
-
         //clicking three dots icon
         let threeDotsElement = user.getElementsByClassName(
-          "result-lockup__common-actions"
+          "result-lockup__action-button"
         )[0];
-        threeDotsElement.getElementsByTagName("li-icon").parentElement.click();
+        threeDotsElement.click();
         await randomSleep(1, 2);
         /**
          *        Clicking on the Message button
@@ -114,9 +128,9 @@ const spamInMailOneUser = async (elements, element) => {
          *    3. Getting the last element of elements list
          *    4. Click on the button
          */
-
-        let list = threeDotsElement.getElementsByTagName("ul")[0];
-        list = list.getElementsByTagName("li");
+        let list = threeDotsElement.parentElement
+          .getElementsByTagName("div")[0]
+          .getElementsByTagName("li");
         let element = list[list.length - 1];
         element.getElementsByTagName("div")[1].click();
 
@@ -143,7 +157,7 @@ const spamInMailOneUser = async (elements, element) => {
            */
           let section = box.getElementsByClassName(
             "message-overlay__conversation"
-          );
+          )[0];
           if (section.innerHTML.toLowerCase().indexOf("open profile") !== -1) {
             /**
              *      Getting user's name
@@ -198,17 +212,21 @@ const spamInMailOneUser = async (elements, element) => {
                 settings.clickSend.min,
                 settings.insertMessage.max
               );
-              section
-                .getElementsByTagName("span")
-                .find((x) => x.innerHTML.toLowerCase() === "send")[0]
-                .parentElement.click();
-              if (1) {
-                let counter = await getCounter();
-                chrome.storage.local.set(
-                  { counter: counter + 1 ? counter : 0 },
-                  () => {}
-                );
+              const spans = section.getElementsByTagName("span");
+              let i = 0;
+              for (i = 0; i < spans.length; i++) {
+                if (spans[i].innerText.toLowerCase() === "send") {
+                  spans[i].parentElement.click();
+                }
               }
+
+              let counter = await getCounter();
+              chrome.storage.local.set(
+                {
+                  counter: counter + 1 ? counter : 0,
+                },
+                () => {}
+              );
             }
           }
         }
@@ -217,11 +235,14 @@ const spamInMailOneUser = async (elements, element) => {
     //Main Message pause
     await randomSleep(settings.closeWindow.min, settings.closeWindow.max);
     try {
-      document
+      const spans = document
         .getElementsByClassName("message-overlay__conversation")
-        .getElementsByTagName("span")
-        .find((x) => x.innerHTML.split(" ")[0].toLowerCase() === "close")
-        .parentElement.parentElement.click();
+        .getElementsByTagName("span");
+      for (i = 0; i < spans.length; i++) {
+        if (spans[i].innerText.toLowerCase() === "close") {
+          spans[i].parentElement.parentElement.click();
+        }
+      }
     } catch (e) {}
     let scrollBy = user.clientHeight;
     window.scrollBy({
