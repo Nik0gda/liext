@@ -245,7 +245,7 @@ const spamInMailOneUser = async (elements, element) => {
     try {
       document
         .getElementsByClassName("message-overlay__conversation")
-        .parentElement.getElementsByClassName("cancel-icon")[0]
+        .parentElement.parentElement.querySelector(`[type='cancel-icon']`)
         .parentElement.click();
     } catch (e) {}
     let scrollBy = user.clientHeight;
