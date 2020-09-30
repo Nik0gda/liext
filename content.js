@@ -244,8 +244,8 @@ const spamInMailOneUser = async (elements, element) => {
     await randomSleep(settings.closeWindow.min, settings.closeWindow.max);
     try {
       document
-        .getElementsByClassName("message-overlay__conversation")
-        .parentElement.parentElement.querySelector(`[type='cancel-icon']`)
+        .getElementsByClassName("message-overlay__conversation")[0]
+        .parentElement.parentElement.querySelector(`[type="cancel-icon"]`)
         .parentElement.click();
     } catch (e) {}
     let scrollBy = user.clientHeight;
