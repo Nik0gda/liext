@@ -95,6 +95,14 @@ const getCounter = () => {
   });
 };
 
+const updateCounter = async () => {
+  let counter = await getCounter();
+  console.log(counter);
+  chrome.storage.local.set({
+    counter: counter + 1,
+  });
+};
+
 const spamInMailOneUser = async (elements, element) => {
   await randomSleep(2, 5);
   let spam = await getState();
@@ -119,6 +127,12 @@ const spamInMailOneUser = async (elements, element) => {
         let threeDotsElement = user.getElementsByClassName(
           "result-lockup__action-button"
         )[0];
+        if (
+          threeDotsElement.nodeName.toLowerCase() === "a" ||
+          threeDotsElement.innerHTML.toLowerCase().includes("save profile")
+        ) {
+          throw new Error("View Profile");
+        }
         threeDotsElement.click();
         await randomSleep(1, 2);
         /**
@@ -220,13 +234,7 @@ const spamInMailOneUser = async (elements, element) => {
                 }
               }
 
-              let counter = await getCounter();
-              chrome.storage.local.set(
-                {
-                  counter: counter ? counter + 1 : 0,
-                },
-                () => {}
-              );
+              await updateCounter();
             }
           }
         }
@@ -235,14 +243,10 @@ const spamInMailOneUser = async (elements, element) => {
     //Main Message pause
     await randomSleep(settings.closeWindow.min, settings.closeWindow.max);
     try {
-      const spans = document
+      document
         .getElementsByClassName("message-overlay__conversation")
-        .getElementsByTagName("span");
-      for (i = 0; i < spans.length; i++) {
-        if (spans[i].innerText.toLowerCase() === "close") {
-          spans[i].parentElement.parentElement.click();
-        }
-      }
+        .parentElement.getElementsByClassName("cancel-icon")[0]
+        .parentElement.click();
     } catch (e) {}
     let scrollBy = user.clientHeight;
     window.scrollBy({

@@ -132,6 +132,7 @@ const load = () => {
   });
   chrome.storage.local.get(["counter"], (obj) => {
     if (!obj["counter"]) {
+      chrome.storage.local.set({ counter: 0 });
       obj["counter"] = 0;
     }
     document.getElementById(
