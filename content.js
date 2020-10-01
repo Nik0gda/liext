@@ -42,7 +42,9 @@ const randomSleep = (min, max) => {
 
 const spamInMail = async (pages) => {
   let spam = await getState();
-  if (spam === true && pages > 0) {
+  let settings = await getSettings();
+  const counter = await getCounter();
+  if (spam === true && pages > 0 && counter < settings.limit) {
     await sleep(100);
     // window.scrollBy({
     //   top: 80,
@@ -58,7 +60,7 @@ const spamInMail = async (pages) => {
       .click();
     await randomSleep(4, 8);
     spamInMail(pages - 1);
-  } else if (pages == 0) {
+  } else if (pages == 0 || counter >= settings.limit) {
     chrome.storage.local.set(
       {
         spam: false,
