@@ -97,17 +97,17 @@ const getCounter = () => {
 
 const updateCounter = async () => {
   let counter = await getCounter();
-  console.log(counter);
   chrome.storage.local.set({
     counter: counter + 1,
   });
 };
 
 const spamInMailOneUser = async (elements, element) => {
-  await randomSleep(2, 5);
   let spam = await getState();
   let settings = await getSettings();
-  if (spam === true && element < elements.length) {
+  const counter = await getCounter();
+  if (spam === true && element < elements.length && counter < settings.limit) {
+    await randomSleep(2, 5);
     let user = elements[element];
     // Next user pause
     await randomSleep(settings.nextUser.min, settings.nextUser.max);
