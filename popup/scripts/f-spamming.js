@@ -71,6 +71,7 @@ const save = () => {
 const resetCounter = () => {
   chrome.storage.local.set({ counter: 0 }, (err) => {
     const snackbarSettings = { message: "Counter resetted", timeout: 2000 };
+    document.getElementById("counter").innerHTML = `Profiles Proccessed: 0`;
     if (err) {
       snackbarSettings.message = err.message;
     }
