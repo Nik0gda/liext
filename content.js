@@ -93,22 +93,23 @@ const getCounter = () => {
   });
 };
 
-const sendCounterUpdate = async () => {
+const sendCounterUpdate = async (payload) => {
   return new Promise(async (resolve) => {
     chrome.runtime.sendMessage({
       command: "profileProccessed",
+      payload: payload,
     });
     resolve();
   });
 };
 
 const updateCounter = async () => {
-  await new Promise(async (resolve) => {
+  const payload = await new Promise(async (resolve) => {
     let counter = await getCounter();
     chrome.storage.local.set({ counter: counter + 1 });
     resolve();
   });
-  await sendCounterUpdate();
+  await sendCounterUpdate(payload);
 };
 
 const spamInMailOneUser = async (elements, element) => {
