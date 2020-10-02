@@ -184,13 +184,4 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     document.getElementById("startSpamming").innerHTML = "Start Spamming";
     return;
   }
-  //TODO UNNECESSARY REQUEST
-  if (command === "profileProccessed") {
-    chrome.storage.local.get(["counter"], (obj) => {
-      const counter = obj.counter;
-      document.getElementById(
-        "counter"
-      ).innerHTML = `Profiles Proccessed: ${counter}`;
-    });
-  }
 });
