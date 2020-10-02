@@ -92,7 +92,7 @@ const load = () => {
       return;
     }
     obj = obj["settings"];
-    console.log(obj);
+
     for (id of ["limit", "message", "subject"]) {
       if (obj[id]) {
         document.getElementById(id).value = obj[id];
@@ -103,7 +103,6 @@ const load = () => {
       document.getElementById("switch").classList.add("is-checked");
     }
     for (const id of ids) {
-      console.log(obj[id]);
       if (obj[id]) {
         document.getElementById(id).parentElement.classList.add("is-dirty");
         document.getElementById(
@@ -175,10 +174,12 @@ const startSpam = () => {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.command === "spammed") {
+    chrome.storage.local.set({
+      spam: false,
+    });
     document
       .getElementById("startSpamming")
       .classList.add("mdl-button--colored");
     document.getElementById("startSpamming").innerHTML = "Start Spamming";
   }
-  console.log(request);
 });

@@ -61,12 +61,6 @@ const spamInMail = async (pages) => {
     await randomSleep(4, 8);
     spamInMail(pages - 1);
   } else if (pages == 0 || counter >= settings.limit) {
-    chrome.storage.local.set(
-      {
-        spam: false,
-      },
-      function () {}
-    );
     chrome.runtime.sendMessage({
       command: "spammed",
     });
