@@ -93,23 +93,23 @@ const getCounter = () => {
   });
 };
 
-const sendCounterUpdate = async (payload) => {
+const sendCounterUpdate = async () => {
   return new Promise(async (resolve) => {
-    chrome.runtime.sendMessage({
-      command: "profileProccessed",
-      payload: payload,
-    });
-    resolve();
+    chrome.runtime.sendMessage(
+      {
+        command: "profileProccessed",
+      },
+      () => resolve()
+    );
   });
 };
-
+//TODO UNNECESSARY REQUEST in front-end js
 const updateCounter = async () => {
-  const payload = await new Promise(async (resolve) => {
+  await new Promise(async (resolve) => {
     let counter = await getCounter();
-    chrome.storage.local.set({ counter: counter + 1 });
-    resolve();
+    chrome.storage.local.set({ counter: counter + 1 }, () => resolve());
   });
-  await sendCounterUpdate(payload);
+  await sendCounterUpdate();
 };
 
 const spamInMailOneUser = async (elements, element) => {

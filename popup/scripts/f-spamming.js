@@ -173,7 +173,7 @@ const startSpam = () => {
 };
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  const { command, payload } = request;
+  const { command } = request;
   if (command === "spammed") {
     chrome.storage.local.set({
       spam: false,
@@ -184,9 +184,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     document.getElementById("startSpamming").innerHTML = "Start Spamming";
     return;
   }
+  //TODO UNNECESSARY REQUEST
   if (command === "profileProccessed") {
-    document.getElementById(
-      "counter"
-    ).innerHTML = `Profiles Proccessed: ${payload}`;
+    chrome.storage.local.get(["counter"], (obj) => {
+      const counter = obj.counter;
+      document.getElementById(
+        "counter"
+      ).innerHTML = `Profiles Proccessed: ${counter}`;
+    });
   }
 });
