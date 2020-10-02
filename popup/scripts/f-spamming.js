@@ -173,7 +173,8 @@ const startSpam = () => {
 };
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.command === "spammed") {
+  const { command } = request;
+  if (command === "spammed") {
     chrome.storage.local.set({
       spam: false,
     });
@@ -181,5 +182,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       .getElementById("startSpamming")
       .classList.add("mdl-button--colored");
     document.getElementById("startSpamming").innerHTML = "Start Spamming";
+    return;
+  }
+  if (command === "profileProccessed") {
+    document.getElementById(
+      "counter"
+    ).innerHTML = `Profiles Proccessed: ${obj["counter"]}`;
   }
 });

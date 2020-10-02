@@ -67,6 +67,8 @@ const spamInMail = async (pages) => {
   }
 };
 
+//TODO: REMOVE REPETITIVE CODE
+
 const getState = () => {
   return new Promise((resolve) => {
     chrome.storage.local.get(["spam"], function (obj) {
@@ -91,11 +93,22 @@ const getCounter = () => {
   });
 };
 
-const updateCounter = async () => {
-  let counter = await getCounter();
-  chrome.storage.local.set({
-    counter: counter + 1,
+const sendCounterUpdate = async () => {
+  return new Promise(async (resolve) => {
+    chrome.runtime.sendMessage({
+      command: "profileProccessed",
+    });
+    resolve();
   });
+};
+
+const updateCounter = async () => {
+  await new Promise(async (resolve) => {
+    let counter = await getCounter();
+    chrome.storage.local.set({ counter: counter + 1 });
+    resolve();
+  });
+  await sendCounterUpdate();
 };
 
 const spamInMailOneUser = async (elements, element) => {
