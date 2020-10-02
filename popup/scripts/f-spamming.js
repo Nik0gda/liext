@@ -173,7 +173,7 @@ const startSpam = () => {
 };
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  const { command } = request;
+  const { command, payload } = request;
   if (command === "spammed") {
     chrome.storage.local.set({
       spam: false,
@@ -187,6 +187,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (command === "profileProccessed") {
     document.getElementById(
       "counter"
-    ).innerHTML = `Profiles Proccessed: ${obj["counter"]}`;
+    ).innerHTML = `Profiles Proccessed: ${payload}`;
   }
 });
