@@ -14,9 +14,14 @@
   "background": {
     "scripts": ["background.js"]
   },
-  "permissions": ["activeTab", "declarativeContent", "storage"],
+  "permissions": [
+    "activeTab",
+    "declarativeContent",
+    "storage",
+    "unlimitedStorage"
+  ],
   "icons": {
     "128": "128.png"
   },
-  "content_security_policy": "script-src 'self' https://code.getmdl.io; object-src 'self'"
+  "content_security_policy": "script-src 'self' https://code.getmdl.io; object-src 'self' unsafe-inline"
 }

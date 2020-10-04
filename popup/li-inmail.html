@@ -10,8 +10,9 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
     />
+    <script src="scripts/jquery.csv.js"></script>
     <script src="md/material.min.js"></script>
-    <script src="scripts/f-spamming.js"></script>
+    <script src="scripts/li-inmail.js"></script>
     <script src="../timeDownloaded.js"></script>
   </head>
 
@@ -21,27 +22,33 @@
       <header class="mdl-layout__header">
         <div class="mdl-layout__header-row">
           <!-- Title -->
-          <span class="mdl-layout-title">Inmail SN.</span>
+          <span class="mdl-layout-title">Inmail LI.</span>
           <!-- Add spacer, to align navigation to the right -->
           <div class="mdl-layout-spacer"></div>
           <!-- Navigation. We hide it in small screens. -->
           <nav class="mdl-navigation mdl-layout--large-screen-only">
-            <a class="mdl-navigation__link is-active" href="">Inmail SN.</a>
-            <a class="mdl-navigation__link" href="./li-inmail.html"
-              >Inmail LI.</a
-            >
+            <a class="mdl-navigation__link" href="./popup.html">Inmail SN.</a>
+            <a class="mdl-navigation__link is-active" href="#">Inmail LI.</a>
           </nav>
         </div>
       </header>
       <div class="mdl-layout__drawer">
-        <span class="mdl-layout-title">Inmail SN.</span>
+        <span class="mdl-layout-title">Inmail LI.</span>
         <nav class="mdl-navigation">
-          <a class="mdl-navigation__link is-active" href="">Inmail SN.</a>
-          <a class="mdl-navigation__link" href="./li-inmail.html">Inmail LI.</a>
+          <a class="mdl-navigation__link" href="./popup.html">Inmail SN.</a>
+          <a class="mdl-navigation__link is-active" href="#">Inmail LI.</a>
         </nav>
       </div>
     </div>
-
+    <div class="file-grid">
+      <input type="file" id="fileUpload" />
+      <button
+        class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+        id="downloadProccessed"
+      >
+        Download Profiles
+      </button>
+    </div>
     <div class="counter-grid">
       <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
         <input class="mdl-textfield__input" type="text" id="limit" />
@@ -56,6 +63,17 @@
       >
         Reset Counter
       </button>
+    </div>
+    <div class="profiles-grid">
+      <div class="loadedCounter">
+        <span id="loadedCounter">Profiles Loaded:</span>
+      </div>
+      <div class="failedProfiles">
+        <span id="failedProfiles">Profiles failed:</span>
+      </div>
+      <div class="savedProfiles">
+        <span id="savedProfiles">Profiles saved for FU:</span>
+      </div>
     </div>
     <!-- End Nav Bar -->
     <div class="flex-container">
