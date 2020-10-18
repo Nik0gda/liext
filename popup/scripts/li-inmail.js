@@ -5,10 +5,37 @@ window.addEventListener("load", (event) => {
     .getElementById("resetCounter")
     .addEventListener("click", resetCounter);
   document.getElementById("fileUpload").onchange = showFile;
+  document
+    .getElementById("downloadProccessed")
+    .addEventListener("click", downloadFile);
   var snackbar = document.querySelector("#snackbar");
   checkForUpdate();
   load();
 });
+
+const downloadFile = async () => {
+  let data = await new Promise((resolve) => {
+    chrome.storage.local.get(["FUProfiles"], function (obj) {
+      resolve(obj["FUProfiles"]);
+    });
+  });
+  const rows = [["sn_hash_id", "first_name", "last_name", "current_company"]];
+  for (obj of data) {
+    rows.push(Object.values(obj).reverse());
+  }
+  console.table(rows);
+  let csvContent =
+    "data:text/csv;charset=utf-8," + rows.map((e) => e.join(",")).join("\n");
+
+  let encodedUri = encodeURI(csvContent);
+  let link = document.createElement("a");
+
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", "FUProfiles.csv");
+  document.body.appendChild(link); // Required for FF
+
+  link.click(); // This will download the data file named "my_data.csv".
+};
 
 const showFile = async (e) => {
   const input = e.target;
@@ -41,15 +68,28 @@ const showFile = async (e) => {
       array.push(content[i][indexes[y]]);
     }
   }
-  chrome.storage.local.set({ liSpamProfiles: parsed }, function (err) {
+
+  chrome.storage.local.set({ liSpamProfiles: parsed }, async (err) => {
     if (err) {
       snackbarSettings["message"] = err.message;
     } else {
+      const FUProfiles = await getDb("FUProfiles");
+      document.getElementById(
+        "loadedProfiles"
+      ).innerHTML = `Profiles loaded: ${parsed[0].length}`;
+      document.getElementById(
+        "failedProfiles"
+      ).innerHTML = `Profiles failed: 0`;
+      document.getElementById(
+        "savedProfiles"
+      ).innerHTML = `Profiles saved for FU: ${FUProfiles.length}`;
       snackbarSettings["message"] =
         "Profiles for LI. Inmail Spam successfully saved";
     }
     snackbar.MaterialSnackbar.showSnackbar(snackbarSettings);
   });
+  chrome.storage.local.set({ counterLiSpam: 0 });
+  chrome.storage.local.set({ counterLiSpamFailed: 0 });
 };
 
 const checkForUpdate = async () => {
@@ -88,20 +128,15 @@ const save = () => {
     }
     settings[id] = { min: text[0], max: text[1] };
   }
-  if (document.getElementById("switch").classList.contains("is-checked")) {
-    settings["other"] = true;
-  } else {
-    settings["other"] = false;
-  }
   settings["message"] = document.getElementById("message").value;
   settings["subject"] = document.getElementById("subject").value;
-  settings["limit"] = document.getElementById("limit").value;
+  settings["limitLi"] = document.getElementById("limitLi").value;
   if (saveError) {
     snackbarSettings["message"] = saveError;
     snackbar.MaterialSnackbar.showSnackbar(snackbarSettings);
     return;
   }
-  chrome.storage.local.set({ settings: settings }, function (err) {
+  chrome.storage.local.set({ liInmailSettings: settings }, function (err) {
     if (err) {
       snackbarSettings["message"] = err.message;
     } else {
@@ -130,36 +165,52 @@ const load = () => {
     "clickSend",
     "closeWindow",
   ];
-  chrome.storage.local.get(["settings"], (obj) => {
+  chrome.storage.local.get(["liInmailSettings"], async (obj) => {
     if (!obj) {
       return;
     }
-    obj = obj["settings"];
-
-    for (id of ["limit", "message", "subject"]) {
-      if (obj[id]) {
-        document.getElementById(id).value = obj[id];
-        document.getElementById(id).parentElement.classList.add("is-dirty");
+    obj = obj["liInmailSettings"];
+    try {
+      for (id of ["limitLi", "message", "subject"]) {
+        if (obj[id]) {
+          document.getElementById(id).value = obj[id];
+          document.getElementById(id).parentElement.classList.add("is-dirty");
+        }
       }
-    }
-    if (obj.other) {
-      document.getElementById("switch").classList.add("is-checked");
-    }
-    for (const id of ids) {
-      if (obj[id]) {
-        document.getElementById(id).parentElement.classList.add("is-dirty");
-        document.getElementById(
-          id
-        ).value = `${obj[id]["min"]}-${obj[id]["max"]}`;
+      if (obj.other) {
+        document.getElementById("switch").classList.add("is-checked");
       }
+      for (const id of ids) {
+        if (obj[id]) {
+          document.getElementById(id).parentElement.classList.add("is-dirty");
+          document.getElementById(
+            id
+          ).value = `${obj[id]["min"]}-${obj[id]["max"]}`;
+        }
+      }
+    } catch (e) {}
+    let FUProfiles = await getDb("FUProfiles");
+    if (!FUProfiles) {
+      FUProfiles = [];
+      chrome.storage.local.set({ FUProfiles: [] });
     }
-    document.getElementById(id).parentElement.classList.add("is-dirty");
+    document.getElementById(
+      "savedProfiles"
+    ).innerHTML = `Profiles saved for FU: ${FUProfiles.length}`;
+    let failed = await getDb("counterLiSpamFailed");
+    if (!failed) {
+      failed = 0;
+      chrome.storage.local.set({ failed: 0 });
+    }
+    document.getElementById(
+      "failedProfiles"
+    ).innerHTML = `Profiles failed: ${failed}`;
 
-    chrome.storage.local.get(["spam"], (obj) => {
+    chrome.storage.local.get(["spamLi"], (obj) => {
       if (!obj) {
-        chrome.storage.local.set({ spam: false });
+        chrome.storage.local.set({ spamLi: false });
       } else {
-        if (obj.spam == true) {
+        if (obj.spamLi == true) {
           document
             .getElementById("startSpamming")
             .classList.remove("mdl-button--colored");
@@ -173,40 +224,61 @@ const load = () => {
       }
     });
   });
-  chrome.storage.local.get(["counter"], (obj) => {
-    if (!obj["counter"]) {
-      chrome.storage.local.set({ counter: 0 });
-      obj["counter"] = 0;
+  chrome.storage.local.get(["liSpamProfiles"], (obj) => {
+    if (!obj["liSpamProfiles"]) {
+      const tobj = {
+        sn_hash_id: [],
+        first_name: [],
+        last_name: [],
+        current_company: [],
+      };
+      chrome.storage.local.set({ liSpamProfiles: tobj });
+      obj["liSpamProfiles"] = tobj;
+    }
+    document.getElementById(
+      "loadedProfiles"
+    ).innerHTML = `Profiles loaded: ${obj["liSpamProfiles"].sn_hash_id.length}`;
+  });
+  chrome.storage.local.get(["counterLiSpamFailed"], (obj) => {
+    if (!obj["counterLiSpamFailed"]) {
+      chrome.storage.local.set({ counterLiSpamFailed: 0 });
+      obj["counterLiSpamFailed"] = 0;
+    }
+    document.getElementById(
+      "failedProfiles"
+    ).innerHTML = `Profiles failed: ${obj["counterLiSpamFailed"]}`;
+  });
+  chrome.storage.local.get(["counterLiSpam"], (obj) => {
+    if (!obj["counterLiSpam"]) {
+      chrome.storage.local.set({ counterLiSpam: 0 });
+      obj["counterLiSpam"] = 0;
     }
     document.getElementById(
       "counter"
-    ).innerHTML = `Profiles Proccessed: ${obj["counter"]}`;
+    ).innerHTML = `Profiles Proccessed: ${obj["counterLiSpam"]}`;
   });
 };
 
 const startSpam = () => {
-  chrome.storage.local.get(["spam"], (obj) => {
+  chrome.storage.local.get(["spamLi"], (obj) => {
     if (!obj) {
-      chrome.storage.local.set({ spam: false }, () => {
-        obj = false;
+      chrome.storage.local.set({ spamLi: false }, () => {
+        obj.spamLi = false;
       });
     } else {
-      obj = obj.spam;
+      obj = obj.spamLi;
     }
     if (!obj) {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id, { command: "spam" }, (response) => {
-          if (response.result == "Started Spamming") {
-            document
-              .getElementById("startSpamming")
-              .classList.remove("mdl-button--colored");
-            document.getElementById("startSpamming").innerHTML =
-              "Stop Spamming";
-          }
-        });
+      chrome.runtime.sendMessage({ command: "spamLi" }, (response) => {
+        if (response.result == "Started Spamming") {
+          document
+            .getElementById("startSpamming")
+            .classList.remove("mdl-button--colored");
+          document.getElementById("startSpamming").innerHTML = "Stop Spamming";
+        }
       });
     } else {
-      chrome.storage.local.set({ spam: false });
+      chrome.storage.local.set({ spamLi: false });
       document
         .getElementById("startSpamming")
         .classList.add("mdl-button--colored");
@@ -217,9 +289,9 @@ const startSpam = () => {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   const { command } = request;
-  if (command === "spammed") {
+  if (command === "spammedLi") {
     chrome.storage.local.set({
-      spam: false,
+      spamLi: false,
     });
     document
       .getElementById("startSpamming")
@@ -228,3 +300,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return;
   }
 });
+
+const getDb = (fieldName) => {
+  return new Promise((resolve) => {
+    chrome.storage.local.get([fieldName], function (obj) {
+      resolve(obj[fieldName]);
+    });
+  });
+};

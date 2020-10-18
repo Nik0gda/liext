@@ -1,17 +1,107 @@
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  console.log(request);
   if (request.command === "spam") {
     sendResponse({
       result: "Started Spamming",
     });
-    chrome.storage.local.set(
-      {
-        spam: true,
-      },
-      function () {}
-    );
+    chrome.storage.local.set({
+      spam: true,
+    });
     spamInMail(parseInt(prompt("How many pages?")));
   }
+  if (request.command === "spamLiOneProfile") {
+    spamLi(request.profile).then((x) => {
+      sendResponse(x);
+    });
+
+    return true;
+  }
 });
+
+const spamLi = async ({ first_name, last_name, company_name }) => {
+  try {
+    let {
+      message,
+      subject,
+      nextUser,
+      clickMessage,
+      insertTitle,
+      insertMessage,
+      clickSend,
+      closeWindow,
+    } = await new Promise((resolve) =>
+      chrome.storage.local.get(["liInmailSettings"], (settings) =>
+        resolve(settings.liInmailSettings)
+      )
+    );
+
+    // Clicking on the message button
+    await randomSleep(clickMessage["min"], clickMessage["max"]);
+    document
+      .querySelector("section.pv-top-card")
+      .getElementsByClassName("message-anywhere-button")[0]
+      .click();
+    await randomSleep(2, 4);
+    //getting the box with box and subject
+    const box = document.getElementsByClassName(
+      "msg-overlay-conversation-bubble--jumbo"
+    )[0];
+
+    //getting and setting value of subject
+    const subjectBox = box
+      .getElementsByClassName("msg-form__subject-line")[0]
+      .getElementsByTagName("input")[0];
+    await randomSleep(insertTitle["min"], insertTitle["max"]);
+    subjectBox.value = subject;
+    subjectBox.dispatchEvent(
+      new Event("input", { bubbles: true, cancelable: true })
+    );
+
+    const messageDiv = box.getElementsByClassName(
+      "msg-form__message-texteditor"
+    )[0];
+    const messageBox = messageDiv.getElementsByClassName(
+      "msg-form__contenteditable"
+    )[0];
+
+    await randomSleep(insertMessage["min"], insertMessage["max"]);
+
+    // being able to send the messag
+    const classListConstant = messageDiv.getElementsByClassName(
+      "msg-form__placeholder"
+    )[0].classList;
+    classListConstant.remove("visible");
+    classListConstant.add("hidden");
+    box
+      .getElementsByClassName("msg-form__send-button")[0]
+      .removeAttribute("disabled");
+
+    message = message
+      .replace("{NAME}", first_name)
+      .replace("{COMPANY}", company_name);
+
+    messageBox.innerHTML = message
+      .split(/[\r\n]/)
+      .map((x) =>
+        x.replace(/\s/g, "").length ? `<p>${x}</p>` : `<p><br/></p>`
+      )
+      .join(""); //inserting the message
+
+    //click send button
+    await randomSleep(clickSend["min"], clickSend["max"]);
+
+    messageBox.dispatchEvent(
+      new Event("input", { bubbles: true, cancelable: true })
+    );
+    box.getElementsByClassName("msg-form__send-button")[0].click();
+
+    await randomSleep(nextUser["min"], nextUser["max"]);
+    return { result: "Spammed", code: 0 };
+  } catch (err) {
+    console.log(err);
+    return { result: "Spammed", code: 1 };
+  }
+};
 
 const htmlDecode = (input) => {
   let doc = new DOMParser().parseFromString(input, "text/html");

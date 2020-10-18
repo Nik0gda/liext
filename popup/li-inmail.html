@@ -51,7 +51,7 @@
     </div>
     <div class="counter-grid">
       <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="text" id="limit" />
+        <input class="mdl-textfield__input" type="text" id="limitLi" />
         <label class="mdl-textfield__label">Counter Limit</label>
       </div>
       <div class="counter">
@@ -65,8 +65,8 @@
       </button>
     </div>
     <div class="profiles-grid">
-      <div class="loadedCounter">
-        <span id="loadedCounter">Profiles Loaded:</span>
+      <div class="loadedProfiles">
+        <span id="loadedProfiles">Profiles Loaded:</span>
       </div>
       <div class="failedProfiles">
         <span id="failedProfiles">Profiles failed:</span>
@@ -83,14 +83,7 @@
       >
         Start Spamming
       </button>
-      <label
-        class="mdl-switch mdl-js-switch mdl-js-ripple-effect"
-        for="switch-1"
-        id="switch"
-      >
-        <input type="checkbox" id="switch-1" class="mdl-switch__input" />
-        <span class="mdl-switch__label">Only New Users</span>
-      </label>
+
       <button
         class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
         id="saveSettings"
