@@ -85,7 +85,8 @@ const liSpamProfiles = async () => {
       await updateErrorCounter();
     } else {
       const FUProfiles = await getDb("FUProfiles");
-      FUProfiles.push(profile);
+      if (!FUProfiles.find((x) => x.sn_hash_id == profile.sn_hash_id))
+        FUProfiles.push(profile);
       chrome.storage.local.set({ FUProfiles: FUProfiles });
     }
     profiles = await getDb("liSpamProfiles");

@@ -21,7 +21,12 @@ const downloadFile = async () => {
   });
   const rows = [["sn_hash_id", "first_name", "last_name", "current_company"]];
   for (obj of data) {
-    rows.push(Object.values(obj).reverse());
+    rows.push([
+      obj["sn_hash_id"],
+      obj["first_name"],
+      obj["last_name"],
+      obj["company_name"],
+    ]);
   }
   console.table(rows);
   let csvContent =
@@ -68,28 +73,25 @@ const showFile = async (e) => {
       array.push(content[i][indexes[y]]);
     }
   }
-
+  await new Promise((resolve) =>
+    chrome.storage.local.set({ liSpamProfilesCounter: 0 }, () => resolve())
+  );
+  await new Promise((resolve) =>
+    chrome.storage.local.set({ counterLiSpamFailed: 0 }, () => resolve())
+  );
   chrome.storage.local.set({ liSpamProfiles: parsed }, async (err) => {
+    const snackbarSettings = {
+      message: "Profiles Uploaded",
+      timeout: 3 * 1000,
+    };
+
     if (err) {
       snackbarSettings["message"] = err.message;
     } else {
-      const FUProfiles = await getDb("FUProfiles");
-      document.getElementById(
-        "loadedProfiles"
-      ).innerHTML = `Profiles loaded: ${parsed[0].length}`;
-      document.getElementById(
-        "failedProfiles"
-      ).innerHTML = `Profiles failed: 0`;
-      document.getElementById(
-        "savedProfiles"
-      ).innerHTML = `Profiles saved for FU: ${FUProfiles.length}`;
-      snackbarSettings["message"] =
-        "Profiles for LI. Inmail Spam successfully saved";
+      load();
     }
     snackbar.MaterialSnackbar.showSnackbar(snackbarSettings);
   });
-  chrome.storage.local.set({ counterLiSpam: 0 });
-  chrome.storage.local.set({ counterLiSpamFailed: 0 });
 };
 
 const checkForUpdate = async () => {
@@ -100,6 +102,7 @@ const checkForUpdate = async () => {
   const commitTime = new Date(
     Date.parse((await request.json()).commit.committer.date)
   );
+  console.log(downloadTime, commitTime);
   if (downloadTime < commitTime) {
     const snackbarSettings = {
       message: "New version available",

@@ -17,6 +17,7 @@ const checkForUpdate = async () => {
   const commitTime = new Date(
     Date.parse((await request.json()).commit.committer.date)
   );
+  console.log(commitTime, downloadTime);
   if (downloadTime < commitTime) {
     const snackbarSettings = {
       message: "New version available",
