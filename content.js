@@ -43,7 +43,9 @@ const spamLi = async ({ first_name, last_name, company_name }) => {
     await randomSleep(clickMessage["min"], clickMessage["max"]);
     const topCard = document.querySelector("section.pv-top-card");
     try {
-      topCard.getElementsByClassName("message-anywhere-button")[0].click();
+      const btn = topCard.getElementsByClassName("message-anywhere-button")[0];
+      if (!btn.parentElement.parentElement.tagName.toLocaleLowerCase() == "li")
+        btn.click();
     } catch (err) {
       const liel = topCard
         .getElementsByClassName("artdeco-dropdown__content")[0]
