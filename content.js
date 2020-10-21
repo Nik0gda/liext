@@ -34,23 +34,45 @@ const spamLi = async ({ first_name, last_name, company_name }) => {
         resolve(settings.liInmailSettings)
       )
     );
-
+    for (i of document.getElementsByClassName(
+      "msg-overlay-conversation-bubble--is-active"
+    )) {
+      i.querySelector(`[type="cancel-icon"]`).parentElement.click();
+    }
     // Clicking on the message button
     await randomSleep(clickMessage["min"], clickMessage["max"]);
-    document
-      .querySelector("section.pv-top-card")
-      .getElementsByClassName("message-anywhere-button")[0]
-      .click();
+    const topCard = document.querySelector("section.pv-top-card");
+    try {
+      topCard.getElementsByClassName("message-anywhere-button")[0].click();
+    } catch (err) {
+      const liel = topCard
+        .getElementsByClassName("artdeco-dropdown__content")[0]
+        .getElementsByTagName("li");
+      for (let i = 0; i < liel.length; i++) {
+        if (liel[i].querySelector("a.message-anywhere-button"))
+          liel[i].querySelector("a").click();
+      }
+    }
     await randomSleep(2, 4);
     //getting the box with box and subject
-    const box = document.getElementsByClassName(
-      "msg-overlay-conversation-bubble--jumbo"
-    )[0];
+    if (document.location.href.split("/")[3] === "messaging") {
+      var box = document.getElementsByClassName(
+        "msg-inmail-compose-form-v2"
+      )[0];
+      var subjectBox = box.getElementsByClassName(
+        "msg-inmail-compose-form__subject-input"
+      )[0];
+    } else {
+      var box = document.getElementsByClassName(
+        "msg-overlay-conversation-bubble--is-active"
+      )[0];
 
-    //getting and setting value of subject
-    const subjectBox = box
-      .getElementsByClassName("msg-form__subject-line")[0]
-      .getElementsByTagName("input")[0];
+      //getting and setting value of subject
+      var subjectBox = box
+        .getElementsByClassName("msg-form__subject-line")[0]
+        .getElementsByTagName("input")[0];
+    }
+
     await randomSleep(insertTitle["min"], insertTitle["max"]);
     subjectBox.value = subject;
     subjectBox.dispatchEvent(

@@ -120,7 +120,6 @@ const save = () => {
     "insertTitle",
     "insertMessage",
     "clickSend",
-    "closeWindow",
   ];
   const settings = {};
   const snackbarSettings = { message: "", timeout: 2000 };
@@ -166,7 +165,6 @@ const load = () => {
     "insertTitle",
     "insertMessage",
     "clickSend",
-    "closeWindow",
   ];
   chrome.storage.local.get(["liInmailSettings"], async (obj) => {
     if (!obj) {
