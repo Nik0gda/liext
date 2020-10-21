@@ -46,8 +46,8 @@ const spamLi = async ({ first_name, last_name, company_name }) => {
       const btn = topCard.getElementsByClassName("message-anywhere-button")[0];
       let clicked = false;
       if (btn.parentElement.parentElement.tagName.toLocaleLowerCase() != "li") {
-        btn.click();
         clicked = true;
+        btn.click();
       }
       if (!clicked) throw "Didn't click";
     } catch (err) {
