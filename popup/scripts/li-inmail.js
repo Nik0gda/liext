@@ -95,6 +95,7 @@ const showFile = async (e) => {
 };
 
 const checkForUpdate = async () => {
+  console.log();
   const downloadTime = getDownloadTime();
   const request = await fetch(
     "https://api.github.com/repos/Nik0gda/liext/commits/master"
