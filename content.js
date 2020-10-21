@@ -44,8 +44,14 @@ const spamLi = async ({ first_name, last_name, company_name }) => {
     const topCard = document.querySelector("section.pv-top-card");
     try {
       const btn = topCard.getElementsByClassName("message-anywhere-button")[0];
-      if (!btn.parentElement.parentElement.tagName.toLocaleLowerCase() == "li")
+      let clicked = false;
+      if (
+        !btn.parentElement.parentElement.tagName.toLocaleLowerCase() == "li"
+      ) {
         btn.click();
+        clicked = true;
+      }
+      if (!clicked) throw "Didn't click";
     } catch (err) {
       const liel = topCard
         .getElementsByClassName("artdeco-dropdown__content")[0]
