@@ -25,7 +25,7 @@ const downloadFile = async () => {
       obj["sn_hash_id"],
       obj["first_name"],
       obj["last_name"],
-      obj["company_name"],
+      obj["current_company"],
     ]);
   }
   console.table(rows);
@@ -43,35 +43,35 @@ const downloadFile = async () => {
 };
 
 const showFile = async (e) => {
-  const input = e.target;
-  let file = input.files[0];
-  console.log(file, input, e);
-  let content = await file.text();
-  console.log($);
-  content = $.csv.toArrays(content);
-  const indexes = [];
+  let proccessed = await new Promise((resolve) => {
+    chrome.storage.local.get(["FUProfiles"], function (obj) {
+      resolve(obj["FUProfiles"]);
+    });
+  });
   const indexesToFind = [
     "sn_hash_id",
     "first_name",
     "last_name",
     "current_company",
   ];
-  const parsed = {};
-  let accumulator = 0;
-  for (name of indexesToFind) {
-    indexes[accumulator] = content[0].indexOf(name);
-    parsed[name] = [];
-    accumulator++;
+  const parsed = [];
+  let indexes = [];
+  const input = e.target;
+  let file = input.files[0];
+  let content = await file.text();
+  content = $.csv.toArrays(content);
+  console.log(content);
+  for (let i = 0; i < 4; i++) {
+    indexes[i] = content[0].indexOf(indexesToFind[i]);
   }
   for (let i = 1; i < content.length; i++) {
-    for (y in indexesToFind) {
-      array = parsed[indexesToFind[y]];
-      if (y == 0) {
-        array.push(content[i][indexes[y]].split(",")[0]);
-        continue;
-      }
-      array.push(content[i][indexes[y]]);
+    let o = {};
+    for (let y = 0; y < 4; y++) {
+      if (y == 0) o[indexesToFind[y]] = content[i][indexes[y]].split(",")[0];
+      else o[indexesToFind[y]] = content[i][indexes[y]];
     }
+    if (!proccessed.some((s) => s["sn_hash_id"] === o["sn_hash_id"]))
+      parsed.push(o);
   }
   await new Promise((resolve) =>
     chrome.storage.local.set({ liSpamProfilesCounter: 0 }, () => resolve())
@@ -84,7 +84,6 @@ const showFile = async (e) => {
       message: "Profiles Uploaded",
       timeout: 3 * 1000,
     };
-
     if (err) {
       snackbarSettings["message"] = err.message;
     } else {
@@ -239,7 +238,7 @@ const load = () => {
     }
     document.getElementById(
       "loadedProfiles"
-    ).innerHTML = `Profiles loaded: ${obj["liSpamProfiles"].sn_hash_id.length}`;
+    ).innerHTML = `Profiles loaded: ${obj["liSpamProfiles"].length}`;
   });
   chrome.storage.local.get(["counterLiSpamFailed"], (obj) => {
     if (!obj["counterLiSpamFailed"]) {

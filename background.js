@@ -56,16 +56,11 @@ const liSpamProfiles = async () => {
   console.log(profiles, index, state, settings, counter);
   while (
     state !== false &&
-    index < profiles.sn_hash_id.length &&
+    index < profiles.length &&
     counter < parseInt(settings.limitLi)
   ) {
     const tab = await getCurrentTab();
-    const profile = {
-      sn_hash_id: profiles.sn_hash_id[index],
-      last_name: profiles.last_name[index],
-      first_name: profiles.first_name[index],
-      company_name: profiles.current_company[index],
-    };
+    const profile = profiles[index];
 
     await spamOnePageLink(
       `https://www.linkedin.com/in/${profile.sn_hash_id}/`,

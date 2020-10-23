@@ -18,7 +18,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-const spamLi = async ({ first_name, last_name, company_name }) => {
+const spamLi = async ({ first_name, last_name, current_company }) => {
   try {
     let {
       message,
@@ -105,7 +105,7 @@ const spamLi = async ({ first_name, last_name, company_name }) => {
 
     message = message
       .replace("{NAME}", first_name)
-      .replace("{COMPANY}", company_name);
+      .replace("{COMPANY}", current_company);
 
     messageBox.innerHTML = message
       .split(/[\r\n]/)
@@ -120,7 +120,7 @@ const spamLi = async ({ first_name, last_name, company_name }) => {
     messageBox.dispatchEvent(
       new Event("input", { bubbles: true, cancelable: true })
     );
-    box.getElementsByClassName("msg-form__send-button")[0].click();
+    // box.getElementsByClassName("msg-form__send-button")[0].click();
 
     await randomSleep(nextUser["min"], nextUser["max"]);
     return { result: "Spammed", code: 0 };
