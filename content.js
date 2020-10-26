@@ -40,11 +40,13 @@ const spamLi = async ({ first_name, last_name, current_company }) => {
         resolve(settings.liInmailSettings)
       )
     );
-    for (i of document.getElementsByClassName(
-      "msg-overlay-conversation-bubble--is-active"
-    )) {
-      i.querySelector(`[type="cancel-icon"]`).parentElement.click();
-    }
+    try {
+      for (i of document.getElementsByClassName(
+        "msg-overlay-conversation-bubble--is-active"
+      )) {
+        i.querySelector(`[type="cancel-icon"]`).parentElement.click();
+      }
+    } catch (err) {}
     // Clicking on the message button
     await randomSleep(clickMessage["min"], clickMessage["max"]);
     const topCard = document.querySelector("section.pv-top-card");
