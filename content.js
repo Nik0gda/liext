@@ -21,10 +21,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 const spamLi = async ({ first_name, last_name, current_company }) => {
   try {
     if (
-      document.location.href.split("/")[3] === "authwall" ||
+      document.location.href.split("/")[3].includes("authwall") ||
       document.location.href.split("/")[3] === "checkpoint"
     ) {
-      return { result: "Spammed", code: 0 };
+      return { result: "Spammed", code: "Emergency" };
     }
     let {
       message,
