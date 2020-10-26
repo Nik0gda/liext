@@ -120,7 +120,7 @@ const spamLi = async ({ first_name, last_name, current_company }) => {
     messageBox.dispatchEvent(
       new Event("input", { bubbles: true, cancelable: true })
     );
-    // box.getElementsByClassName("msg-form__send-button")[0].click();
+    box.getElementsByClassName("msg-form__send-button")[0].click();
 
     await randomSleep(nextUser["min"], nextUser["max"]);
     return { result: "Spammed", code: 0 };
