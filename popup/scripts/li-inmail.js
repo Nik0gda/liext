@@ -236,9 +236,9 @@ const load = () => {
       chrome.storage.local.set({ liSpamProfiles: tobj });
       obj["liSpamProfiles"] = tobj;
     }
-    document.getElementById(
-      "loadedProfiles"
-    ).innerHTML = `Profiles loaded: ${obj["liSpamProfiles"].length}`;
+    document.getElementById("loadedProfiles").innerHTML = `Profiles loaded: ${
+      obj["liSpamProfiles"].length || 0
+    }`;
   });
   chrome.storage.local.get(["counterLiSpamFailed"], (obj) => {
     if (!obj["counterLiSpamFailed"]) {
