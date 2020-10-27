@@ -24,7 +24,7 @@ const spamLi = async ({ first_name, last_name, current_company }) => {
       document.location.href.split("/")[3].includes("authwall") ||
       document.location.href.split("/")[3] === "checkpoint"
     ) {
-      return { result: "Spammed", code: "Emergency" };
+      return { result: "Spammed", code: "emergency" };
     }
     let {
       message,
