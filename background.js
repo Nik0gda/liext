@@ -76,14 +76,15 @@ const liSpamProfiles = async () => {
       )
     );
     await updateCounter();
-    if (code === 1) {
-      await updateErrorCounter();
-    } else if (code == 0) {
+
+    if (code === 0) {
       const FUProfiles = await getDb("FUProfiles");
       if (!FUProfiles.find((x) => x.sn_hash_id == profile.sn_hash_id))
         FUProfiles.push(profile);
       chrome.storage.local.set({ FUProfiles: FUProfiles });
-    } else if (code == "emergency") {
+    } else if (code === 1) {
+      await updateErrorCounter();
+    } else if (code === 2) {
       await updateErrorCounter();
       break;
     }
