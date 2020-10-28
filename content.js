@@ -1,7 +1,8 @@
 const checkForLogout = () => {
   if (
     document.location.href.split("/")[3].includes("authwall") ||
-    document.location.href.split("/")[3] === "checkpoint"
+    document.location.href.split("/")[3] === "checkpoint" ||
+    document.location.href.split("/")[3] === "signup"
   ) {
     chrome.runtime.sendMessage({
       command: "spammedLi",
