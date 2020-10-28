@@ -1,4 +1,19 @@
+const checkForLogout = () => {
+  if (
+    document.location.href.split("/")[3].includes("authwall") ||
+    document.location.href.split("/")[3] === "checkpoint"
+  ) {
+    chrome.runtime.sendMessage({
+      command: "spammedLi",
+    });
+    chrome.storage.local.set({
+      spamLi: false,
+    });
+  }
+};
+checkForLogout();
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  checkForLogout();
   console.log(request);
   if (request.command === "spam") {
     sendResponse({
@@ -20,12 +35,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 const spamLi = async ({ first_name, last_name, current_company }) => {
   try {
-    if (
-      document.location.href.split("/")[3].includes("authwall") ||
-      document.location.href.split("/")[3] === "checkpoint"
-    ) {
-      return { result: "Spammed", code: 2 };
-    }
     let {
       message,
       subject,

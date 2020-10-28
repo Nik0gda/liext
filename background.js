@@ -1,39 +1,3 @@
-// function randomString(len) {
-//   charSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-//   var randomString = "";
-//   for (var i = 0; i < len; i++) {
-//     var randomPoz = Math.floor(Math.random() * charSet.length);
-//     randomString += charSet.substring(randomPoz, randomPoz + 1);
-//   }
-//   return randomString;
-// }
-
-// chrome.runtime.onStartup.addListener(async function () {
-//   console.log(33);
-//   const response = await fetch(
-//     `https://api.github.com/repos/Nik0gda/TopPubg/commits/master`
-//   );
-//   const jsonedResponse = await response.json();
-//   console.log(jsonedResponse);
-// });
-
-// chrome.runtime.onInstalled.addListener(async function () {
-//   console.log(33);
-//   const response = await fetch(
-//     `https://api.github.com/repos/Nik0gda/TopPubg/commits/master`
-//   );
-//   const jsonedResponse = await response.json();
-//   console.log(jsonedResponse);
-// });
-
-// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-//   if (request.requested == "getClassName") {
-//     chrome.storage.sync.get(["key"], function (result) {
-//       sendResponse({ className: result });
-//     });
-//   }
-// });
-
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.command === "spamLi") {
     sendResponse({
@@ -66,8 +30,6 @@ const liSpamProfiles = async () => {
       `https://www.linkedin.com/in/${profile.sn_hash_id}/`,
       tab
     );
-    // await new Promise((resolve) => setTimeout(resolve, 5000));
-
     const code = await spamOnePageMessage(profile, tab);
     index++;
     await new Promise((resolve) =>
@@ -84,9 +46,6 @@ const liSpamProfiles = async () => {
       chrome.storage.local.set({ FUProfiles: FUProfiles });
     } else if (code === 1) {
       await updateErrorCounter();
-    } else if (code === 2) {
-      await updateErrorCounter();
-      break;
     }
     profiles = await getDb("liSpamProfiles");
     index = await liSpamProfilesCounterGetter();
