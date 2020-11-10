@@ -50,6 +50,15 @@ const spamLi = async ({ first_name, last_name, current_company }) => {
         resolve(settings.liInmailSettings)
       )
     );
+    for (let i = 0; i < 3; i++) {
+      try {
+        for (i of document.getElementsByClassName(
+          "msg-overlay-conversation-bubble--default-inactive"
+        )) {
+          i.querySelector(`[type="cancel-icon"]`).parentElement.click();
+        }
+      } catch (err) {}
+    }
     try {
       for (i of document.getElementsByClassName(
         "msg-overlay-conversation-bubble--is-active"
