@@ -13,6 +13,7 @@
     <script src="scripts/jquery.csv.js"></script>
     <script src="md/material.min.js"></script>
     <script src="scripts/li-inmail.js"></script>
+    <script src="scripts/favourite.js"></script>
     <script src="../timeDownloaded.js"></script>
   </head>
 
@@ -27,15 +28,27 @@
           <div class="mdl-layout-spacer"></div>
           <!-- Navigation. We hide it in small screens. -->
           <nav class="mdl-navigation mdl-layout--large-screen-only">
-            <a class="mdl-navigation__link" href="./popup.html">Inmail SN.</a>
+            <a class="mdl-navigation__link" href="./popup.html?manually=true"
+              >Inmail SN.</a
+            >
             <a class="mdl-navigation__link is-active" href="#">Inmail LI.</a>
           </nav>
+          <label
+            class="mdl-switch mdl-js-switch mdl-js-ripple-effect"
+            for="switch-1"
+            id="favourite"
+          >
+            <input type="checkbox" class="mdl-switch__input" />
+            <span class="mdl-switch__label"></span>
+          </label>
         </div>
       </header>
       <div class="mdl-layout__drawer">
         <span class="mdl-layout-title">Inmail LI.</span>
         <nav class="mdl-navigation">
-          <a class="mdl-navigation__link" href="./popup.html">Inmail SN.</a>
+          <a class="mdl-navigation__link" href="./popup.html?manually=true"
+            >Inmail SN.</a
+          >
           <a class="mdl-navigation__link is-active" href="#">Inmail LI.</a>
         </nav>
       </div>

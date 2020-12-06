@@ -5,6 +5,7 @@ window.addEventListener("load", (event) => {
     .getElementById("resetCounter")
     .addEventListener("click", resetCounter);
   var snackbar = document.querySelector("#snackbar");
+  setFavouriteStatus();
   checkForUpdate();
   load();
 });

@@ -12,6 +12,7 @@
     />
     <script src="md/material.min.js"></script>
     <script src="scripts/f-spamming.js"></script>
+    <script src="scripts/favourite.js"></script>
     <script src="../timeDownloaded.js"></script>
   </head>
 
@@ -26,18 +27,36 @@
           <div class="mdl-layout-spacer"></div>
           <!-- Navigation. We hide it in small screens. -->
           <nav class="mdl-navigation mdl-layout--large-screen-only">
-            <a class="mdl-navigation__link is-active" href="">Inmail SN.</a>
-            <a class="mdl-navigation__link" href="./li-inmail.html"
+            <a class="mdl-navigation__link is-active" href="#" data-auto="false"
+              >Inmail SN.</a
+            >
+            <a
+              class="mdl-navigation__link"
+              href="./li-inmail.html?manually=true"
               >Inmail LI.</a
             >
           </nav>
+          <label
+            class="mdl-switch mdl-js-switch mdl-js-ripple-effect"
+            for="switchFavourite"
+            id="favourite"
+          >
+            <input
+              type="checkbox"
+              class="mdl-switch__input"
+              id="switchFavourite"
+            />
+            <span class="mdl-switch__label"></span>
+          </label>
         </div>
       </header>
       <div class="mdl-layout__drawer">
         <span class="mdl-layout-title">Inmail SN.</span>
         <nav class="mdl-navigation">
           <a class="mdl-navigation__link is-active" href="">Inmail SN.</a>
-          <a class="mdl-navigation__link" href="./li-inmail.html">Inmail LI.</a>
+          <a class="mdl-navigation__link" href="./li-inmail.html?manually=true"
+            >Inmail LI.</a
+          >
         </nav>
       </div>
     </div>

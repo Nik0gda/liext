@@ -63,6 +63,10 @@ body::-webkit-scrollbar {
   left: 35vw;
 }
 
+#favourite {
+  left: 50%;
+}
+
 .profiles-grid {
   position: relative;
   top: 100vh;

@@ -9,6 +9,7 @@ window.addEventListener("load", (event) => {
     .getElementById("downloadProccessed")
     .addEventListener("click", downloadFile);
   var snackbar = document.querySelector("#snackbar");
+  setFavouriteStatus();
   checkForUpdate();
   load();
 });
@@ -301,11 +302,3 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return;
   }
 });
-
-const getDb = (fieldName) => {
-  return new Promise((resolve) => {
-    chrome.storage.local.get([fieldName], function (obj) {
-      resolve(obj[fieldName]);
-    });
-  });
-};
