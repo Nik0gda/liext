@@ -10,8 +10,9 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
     />
+    <script src="scripts/jquery.csv.js"></script>
     <script src="md/material.min.js"></script>
-    <script src="scripts/f-spamming.js"></script>
+    <script src="scripts/invites.js"></script>
     <script src="scripts/favourite.js"></script>
     <script src="../timeDownloaded.js"></script>
   </head>
@@ -22,12 +23,12 @@
       <header class="mdl-layout__header">
         <div class="mdl-layout__header-row">
           <!-- Title -->
-          <span class="mdl-layout-title">Inmail SN.</span>
+          <span class="mdl-layout-title">Invites</span>
           <!-- Add spacer, to align navigation to the right -->
           <div class="mdl-layout-spacer"></div>
           <!-- Navigation. We hide it in small screens. -->
           <nav class="mdl-navigation mdl-layout--large-screen-only">
-            <a class="mdl-navigation__link is-active" href="#" data-auto="false"
+            <a class="mdl-navigation__link" href="./popup.html?manually=true"
               >Inmail SN.</a
             >
             <a
@@ -35,9 +36,7 @@
               href="./li-inmail.html?manually=true"
               >Inmail LI.</a
             >
-            <a class="mdl-navigation__link" href="./invites.html?manually=true"
-              >Invites</a
-            >
+            <a class="mdl-navigation__link is-active" href="#">Invites</a>
             <a
               class="mdl-navigation__link"
               href="./spammer-invites.html?manually=true"
@@ -46,28 +45,24 @@
           </nav>
           <label
             class="mdl-switch mdl-js-switch mdl-js-ripple-effect"
-            for="switchFavourite"
+            for="switch-1"
             id="favourite"
           >
-            <input
-              type="checkbox"
-              class="mdl-switch__input"
-              id="switchFavourite"
-            />
+            <input type="checkbox" class="mdl-switch__input" />
             <span class="mdl-switch__label"></span>
           </label>
         </div>
       </header>
       <div class="mdl-layout__drawer">
-        <span class="mdl-layout-title">Inmail SN.</span>
+        <span class="mdl-layout-title">Invites</span>
         <nav class="mdl-navigation">
-          <a class="mdl-navigation__link is-active" href="">Inmail SN.</a>
+          <a class="mdl-navigation__link" href="./popup.html?manually=true"
+            >Inmail SN.</a
+          >
           <a class="mdl-navigation__link" href="./li-inmail.html?manually=true"
             >Inmail LI.</a
           >
-          <a class="mdl-navigation__link" href="./invites.html?manually=true"
-            >Invites</a
-          >
+          <a class="mdl-navigation__link is-active" href="#">Invites</a>
           <a
             class="mdl-navigation__link"
             href="./spammer-invites.html?manually=true"
@@ -76,10 +71,12 @@
         </nav>
       </div>
     </div>
-
+    <div class="file-grid">
+      <input type="file" id="fileUpload" />
+    </div>
     <div class="counter-grid">
       <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input class="mdl-textfield__input" type="text" id="limit" />
+        <input class="mdl-textfield__input" type="text" id="limitLi" />
         <label class="mdl-textfield__label">Counter Limit</label>
       </div>
       <div class="counter">
@@ -92,6 +89,14 @@
         Reset Counter
       </button>
     </div>
+    <div class="profiles-grid">
+      <div class="loadedProfiles">
+        <span id="loadedProfiles">Profiles Loaded:</span>
+      </div>
+      <div class="failedProfiles">
+        <span id="failedProfiles">Profiles failed:</span>
+      </div>
+    </div>
     <!-- End Nav Bar -->
     <div class="flex-container">
       <button
@@ -100,14 +105,7 @@
       >
         Start Spamming
       </button>
-      <label
-        class="mdl-switch mdl-js-switch mdl-js-ripple-effect"
-        for="switch-1"
-        id="switch"
-      >
-        <input type="checkbox" id="switch-1" class="mdl-switch__input" />
-        <span class="mdl-switch__label">Only New Users</span>
-      </label>
+
       <button
         class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
         id="saveSettings"
@@ -134,14 +132,7 @@
           <label class="mdl-textfield__label">Click message</label>
         </div>
       </form>
-      <form action="#">
-        <div
-          class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
-        >
-          <input class="mdl-textfield__input" type="text" id="insertTitle" />
-          <label class="mdl-textfield__label">Insert Title</label>
-        </div>
-      </form>
+
       <form action="#">
         <div
           class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
@@ -158,14 +149,6 @@
           <label class="mdl-textfield__label">Click Send</label>
         </div>
       </form>
-      <form action="#">
-        <div
-          class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
-        >
-          <input class="mdl-textfield__input" type="text" id="closeWindow" />
-          <label class="mdl-textfield__label">Close Window</label>
-        </div>
-      </form>
     </div>
     <!-- message content text field -->
     <form action="#">
@@ -177,16 +160,6 @@
           id="message"
         ></textarea>
         <label class="mdl-textfield__label">Your message</label>
-      </div>
-    </form>
-    <!-- InMail Subject -->
-    <form action="#">
-      <div
-        class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label"
-        id="title"
-      >
-        <input class="mdl-textfield__input" type="text" id="subject" />
-        <label class="mdl-textfield__label">InMail Subject</label>
       </div>
     </form>
     <div id="snackbar" class="mdl-js-snackbar mdl-snackbar">

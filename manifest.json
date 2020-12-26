@@ -18,7 +18,9 @@
     "activeTab",
     "declarativeContent",
     "storage",
-    "unlimitedStorage"
+    "unlimitedStorage",
+    "webRequest",
+    "<all_urls>"
   ],
   "icons": {
     "128": "128.png"
