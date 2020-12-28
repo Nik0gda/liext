@@ -201,9 +201,16 @@ const spamInvite = async ({ first_name, last_name, current_company }) => {
     await randomSleep(2, 4);
     const modal = document.getElementById("artdeco-modal-outlet");
 
+    if (!message.replace(/\s/g, "").length) {
+      modal
+        .querySelectorAll("button:not([data-test-modal-close-btn])")[1]
+        .click();
+      return { result: "Spammed", code: 0 };
+    }
+
     // click 'Add note'
     modal.querySelector("button:not([data-test-modal-close-btn])").click();
-    console.log("cliecked");
+
     await randomSleep(insertMessage["min"], insertMessage["max"]);
 
     //composing the message and getting the textarea
