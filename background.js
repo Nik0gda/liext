@@ -239,7 +239,7 @@ const spamProfiles = async ([
 
 const liSpamProfiles = async () => {
   let profiles = await getDb("liSpamProfiles");
-  let index = profilesCounterGetter("liSpamProfilesCounter");
+  let index = await profilesCounterGetter("liSpamProfilesCounter");
   state = await getDb("spamLi");
   let settings = await getDb("liInmailSettings");
   let counter = await getDb("counterLiSpam");
