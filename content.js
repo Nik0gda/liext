@@ -35,6 +35,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     return true;
   }
+  if (request.command === "spamLiOneProfileWriteMessage") {
+    console.log(33);
+    spamLiWriteMessage(request.data).then((x) => {
+      sendResponse(x);
+    });
+    return true;
+  }
   if (request.command === "spamInvitesOneProfile") {
     spamInvite(request.data).then((x) => {
       sendResponse(x);
@@ -72,16 +79,7 @@ const collectConnections = async () => {
 
 const spamLi = async ({ first_name, last_name, current_company }) => {
   try {
-    let {
-      message,
-      subject,
-      nextUser,
-      clickMessage,
-      insertTitle,
-      insertMessage,
-      clickSend,
-      closeWindow,
-    } = await new Promise((resolve) =>
+    let { clickMessage } = await new Promise((resolve) =>
       chrome.storage.local.get(["liInmailSettings"], (settings) =>
         resolve(settings.liInmailSettings)
       )
@@ -108,6 +106,33 @@ const spamLi = async ({ first_name, last_name, current_company }) => {
     }
     await randomSleep(2, 4);
     //getting the box with box and subject
+    const { code } = await spamLiWriteMessage({ first_name, current_company });
+    if (code === 1) throw new Error();
+    return { result: "Spammed", code: 0 };
+  } catch (err) {
+    console.log(err);
+    return {
+      result: "Spammed",
+      code: 1,
+    };
+  }
+};
+
+const spamLiWriteMessage = async ({ first_name, current_company }) => {
+  try {
+    let {
+      message,
+      subject,
+      nextUser,
+      insertTitle,
+      insertMessage,
+      clickSend,
+    } = await new Promise((resolve) =>
+      chrome.storage.local.get(["liInmailSettings"], (settings) =>
+        resolve(settings.liInmailSettings)
+      )
+    );
+
     if (document.location.href.split("/")[3] === "messaging") {
       var box = document.getElementsByClassName(
         "msg-inmail-compose-form-v2"

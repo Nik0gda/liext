@@ -250,14 +250,29 @@ const liSpamProfiles = async () => {
     index < profiles.length &&
     counter < parseInt(settings.limitLi)
   ) {
-    const tab = await getCurrentTab();
+    let tab = await getCurrentTab();
     const profile = profiles[index];
 
     await spamOnePageLink(
       `https://www.linkedin.com/in/${profile.sn_hash_id}/`,
       tab
     );
-    const code = await spamOnePageMessage(profile, tab, "spamLiOneProfile");
+
+    let code = await spamOnePageMessage(profile, tab, "spamLiOneProfile");
+
+    if (code === 2) {
+      console.log("error catched");
+      await sleep(5000);
+      tab = await getCurrentTab();
+      if (tab.url.split("/")[3] === "messaging") {
+        code = await spamOnePageMessage(
+          profile,
+          tab,
+          "spamLiOneProfileWriteMessage"
+        );
+        if (code === 2) code = 1;
+      }
+    }
     index++;
     await new Promise((resolve) =>
       chrome.storage.local.set({ liSpamProfilesCounter: index }, () =>
@@ -295,7 +310,15 @@ const spamOnePageMessage = (data, tab, commandName) => {
         tab.id,
         { command: commandName, data: data },
         (response) => {
-          console.log(44, response);
+          const { lastError } = chrome.runtime;
+          if (lastError) {
+            const { message } = lastError;
+            if (
+              message ==
+              "The message port closed before a response was received."
+            )
+              resolve(2);
+          }
           try {
             if (response.result == "Spammed") {
               resolve(response.code);
@@ -385,4 +408,8 @@ const getDb = (fieldName) => {
       resolve(obj[fieldName]);
     });
   });
+};
+
+const sleep = (ms) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 };
