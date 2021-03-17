@@ -102,6 +102,8 @@ const spamLi = async ({ first_name, last_name, current_company }) => {
       for (let i = 0; i < liel.length; i++) {
         if (liel[i].querySelector("a.message-anywhere-button"))
           liel[i].querySelector("a").click();
+        if (liel[i].querySelector("button.pv-s-profile-actions--message"))
+          liel[i].querySelector("button.pv-s-profile-actions--message").click();
       }
     }
     await randomSleep(2, 4);
@@ -140,6 +142,10 @@ const spamLiWriteMessage = async ({ first_name, current_company }) => {
       var subjectBox = box.getElementsByClassName(
         "msg-inmail-compose-form__subject-input"
       )[0];
+      if (!subjectBox)
+        subjectBox = box
+          .getElementsByClassName("msg-form__subject-line")[0]
+          .getElementsByTagName("input")[0];
     } else {
       var box = document.getElementsByClassName(
         "msg-overlay-conversation-bubble--is-active"
