@@ -122,18 +122,12 @@ const spamLi = async ({ first_name, last_name, current_company }) => {
 
 const spamLiWriteMessage = async ({ first_name, current_company }) => {
   try {
-    let {
-      message,
-      subject,
-      nextUser,
-      insertTitle,
-      insertMessage,
-      clickSend,
-    } = await new Promise((resolve) =>
-      chrome.storage.local.get(["liInmailSettings"], (settings) =>
-        resolve(settings.liInmailSettings)
-      )
-    );
+    let { message, subject, nextUser, insertTitle, insertMessage, clickSend } =
+      await new Promise((resolve) =>
+        chrome.storage.local.get(["liInmailSettings"], (settings) =>
+          resolve(settings.liInmailSettings)
+        )
+      );
 
     if (document.location.href.split("/")[3] === "messaging") {
       var box = document.getElementsByClassName(
@@ -214,13 +208,8 @@ const spamLiWriteMessage = async ({ first_name, current_company }) => {
 
 const spamInvite = async ({ first_name, last_name, current_company }) => {
   try {
-    let {
-      message,
-      nextUser,
-      clickMessage,
-      insertMessage,
-      clickSend,
-    } = await getDb("invitesSettings");
+    let { message, nextUser, clickMessage, insertMessage, clickSend } =
+      await getDb("invitesSettings");
     console.log(await getDb("invitesSettings"));
     await closeMessageBoxes();
     await randomSleep(clickMessage["min"], clickMessage["max"]);
@@ -587,7 +576,7 @@ const spamInMailOneUser = async (elements, element) => {
           .getElementsByTagName("div")[0]
           .getElementsByTagName("li");
         let element = list[list.length - 1];
-        element.getElementsByTagName("div")[1].click();
+        element.getElementsByTagName("div")[0].click();
 
         //Click Message pause
         await randomSleep(settings.clickMessage.min, settings.clickMessage.max);
